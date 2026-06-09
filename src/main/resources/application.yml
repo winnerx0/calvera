@@ -13,7 +13,12 @@ spring:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
             scope:
-              - repo
-              - user
+            - read:user
+            - user:email
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
 jwt:
   secret-key: ${JWT_SECRET_KEY}
