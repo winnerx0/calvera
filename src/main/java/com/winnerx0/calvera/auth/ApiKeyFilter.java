@@ -2,7 +2,6 @@ package com.winnerx0.calvera.auth;
 
 import com.winnerx0.calvera.apikey.ApiKeyService;
 import com.winnerx0.calvera.auth.internal.ApiKeyAuthToken;
-import com.winnerx0.calvera.auth.internal.ApiKeyAuthenticationProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +13,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class ApiKeyFilter extends OncePerRequestFilter {

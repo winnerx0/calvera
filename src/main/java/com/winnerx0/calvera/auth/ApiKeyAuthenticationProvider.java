@@ -1,8 +1,7 @@
-package com.winnerx0.calvera.auth.internal;
+package com.winnerx0.calvera.auth;
 
-import com.nimbusds.openid.connect.sdk.assurance.evidences.attachment.Digest;
-import com.nimbusds.openid.connect.sdk.assurance.evidences.attachment.HashAlgorithm;
 import com.winnerx0.calvera.apikey.ApiKeyService;
+import com.winnerx0.calvera.auth.internal.ApiKeyAuthToken;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
