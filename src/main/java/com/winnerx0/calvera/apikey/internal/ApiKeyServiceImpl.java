@@ -4,7 +4,7 @@ import com.winnerx0.calvera.apikey.ApiKeyService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApiKeyServiceImpl implements ApiKeyService {
+class ApiKeyServiceImpl implements ApiKeyService {
 
     private final ApiKeyRepository apiKeyRepository;
 
