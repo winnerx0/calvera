@@ -33,5 +33,4 @@ build/
 .vscode/
 
 ### Secrets ###
-application-local.yml
 .env

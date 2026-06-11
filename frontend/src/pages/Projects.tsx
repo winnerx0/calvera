@@ -178,11 +178,6 @@ export default function Projects() {
                                 <span className="block truncate font-mono text-[12.5px]">
                                   {repo.fullName}
                                 </span>
-                                {/*{repo.description && (*/}
-                                {/*  <span className="block truncate text-[11.5px] text-muted-foreground">*/}
-                                {/*    {repo.description}*/}
-                                {/*  </span>*/}
-                                {/*)}*/}
                               </span>
                               {repo.isPrivate && (
                                 <Lock className="size-3 shrink-0 text-muted-foreground" />
