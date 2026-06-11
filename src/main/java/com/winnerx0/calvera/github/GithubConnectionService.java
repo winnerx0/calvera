@@ -1,6 +1,10 @@
 package com.winnerx0.calvera.github;
 
+import java.util.List;
+
 public interface GithubConnectionService {
 
-    String getRefreshToken(String userId);
+    void saveOrUpdate(Long userId, String accessToken);
+
+    List<GithubRepoView> getUserRepos(Long userId);
 }

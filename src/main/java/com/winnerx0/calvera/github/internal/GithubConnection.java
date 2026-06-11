@@ -1,24 +1,33 @@
 package com.winnerx0.calvera.github.internal;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-public class GithubConnection {
+@Table(name = "github_connections")
+@Getter
+@Setter
+@NoArgsConstructor
+class GithubConnection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String refreshToken;
+    @Column(nullable = false)
+    private String accessToken;
 
-    private LocalDate createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
-    private LocalDate updatedAt;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
     private Long userId;
 }
