@@ -19,7 +19,7 @@ import java.util.function.Function;
 @Component
 class JwtUtils {
 
-    @Value("${jwt.secret-key")
+    @Value("${jwt.secret-key}")
     private String secretKey;
 
     private SecretKey getSigningKey(){
@@ -33,6 +33,14 @@ class JwtUtils {
     private Date extractExpiration(String token){
 
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public String extractRole(String token){
+        return extractClaim(token, (claims) -> claims.get("role", String.class));
+    }
+
+    public String extractTokenType(String token){
+        return extractClaim(token, (claims) -> claims.get("type", String.class));
     }
 
     public boolean isTokenValid(String token, Long id){
@@ -54,9 +62,11 @@ class JwtUtils {
     }
 
     private Claims extractClaims(String token){
-        return (Claims) Jwts.parser()
-                .parse(token)
-                .getBody();
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private String buildToken(Long id, Date expiration, Map<String, String> claims){

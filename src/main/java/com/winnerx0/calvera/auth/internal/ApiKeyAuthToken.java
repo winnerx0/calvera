@@ -7,7 +7,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 
 import java.util.Collection;
 
-public class ApiKeyAuthToken extends AbstractAuthenticationToken {
+class ApiKeyAuthToken extends AbstractAuthenticationToken {
 
     private final String apiKey;
 
