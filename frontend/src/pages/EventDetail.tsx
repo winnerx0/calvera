@@ -68,9 +68,9 @@ export default function EventDetail() {
               ))}
             </dl>
 
-            {event.logsUrl && (
+            {event.jobsUrl && (
               <a
-                href={event.logsUrl}
+                href={event.jobsUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 border-t pt-5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"

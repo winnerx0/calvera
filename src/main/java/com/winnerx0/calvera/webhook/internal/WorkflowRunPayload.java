@@ -14,7 +14,7 @@ record WorkflowRunPayload(
     record WorkflowRun(
             String name,
             String conclusion,
-            @JsonProperty("logs_url") String logsUrl
+            @JsonProperty("jobs_url") String jobsUrl
     ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)

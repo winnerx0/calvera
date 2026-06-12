@@ -20,13 +20,13 @@ class CiEventServiceImpl implements CiEventService {
     @Transactional
     public CiEventView save(String deliveryId, String repositoryFullName,
                             String workflowName, String conclusion,
-                            String logsUrl, String rawPayload, Long projectId) {
+                            String jobsUrl, String rawPayload, Long projectId) {
         CiEvent entity = new CiEvent();
         entity.setDeliveryId(deliveryId);
         entity.setRepositoryFullName(repositoryFullName);
         entity.setWorkflowName(workflowName);
         entity.setConclusion(conclusion);
-        entity.setLogsUrl(logsUrl);
+        entity.setJobsUrl(jobsUrl);
         entity.setRawPayload(rawPayload);
         entity.setProjectId(projectId);
         return toView(repository.save(entity));
@@ -68,7 +68,8 @@ class CiEventServiceImpl implements CiEventService {
     private CiEventView toView(CiEvent e) {
         return new CiEventView(
                 e.getId(), e.getDeliveryId(), e.getRepositoryFullName(),
-                e.getWorkflowName(), e.getConclusion(), e.getLogsUrl(),
-                e.getStatus(), e.getAnalysisResult(), e.getCreatedAt(), e.getUpdatedAt());
+                e.getWorkflowName(), e.getConclusion(), e.getJobsUrl(),
+                e.getStatus(), e.getAnalysisResult(), e.getProjectId(),
+                e.getCreatedAt(), e.getUpdatedAt());
     }
 }

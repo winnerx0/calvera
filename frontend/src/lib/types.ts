@@ -12,9 +12,10 @@ export interface CiEvent {
   repositoryFullName: string
   workflowName: string
   conclusion: string
-  logsUrl: string
+  jobsUrl: string
   status: CiEventStatus
   analysisResult: string | null
+  projectId: number
   createdAt: string
   updatedAt: string
 }

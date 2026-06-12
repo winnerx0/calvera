@@ -11,6 +11,8 @@ public interface ProjectService {
 
     Optional<ProjectView> findByRepositoryName(String repositoryName);
 
+    Optional<Long> findOwnerUserId(Long projectId);
+
     ProjectView create(CreateProjectRequest request, Long userId);
 
     Optional<ProjectView> update(Long id, UpdateProjectRequest request, Long userId);

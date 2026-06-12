@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +37,12 @@ class GithubConnectionServiceImpl implements GithubConnectionService {
         connection.setAccessToken(accessToken);
         connection.setUpdatedAt(LocalDateTime.now());
         githubConnectionRepository.save(connection);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<String> findAccessToken(Long userId) {
+        return githubConnectionRepository.findByUserId(userId).map(GithubConnection::getAccessToken);
     }
 
     @Override

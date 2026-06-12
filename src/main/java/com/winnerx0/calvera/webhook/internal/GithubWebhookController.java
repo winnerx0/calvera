@@ -53,7 +53,7 @@ class GithubWebhookController {
         String idempotencyKey = IDEMPOTENCY_KEY_PREFIX + deliveryId;
         Boolean isNew = redisTemplate.opsForValue().setIfAbsent(idempotencyKey, "1", IDEMPOTENCY_TTL);
         if (Boolean.FALSE.equals(isNew)) {
-            log.debug("Duplicate delivery {}, skipping", deliveryId);
+            log.info("Duplicate delivery {}, skipping", deliveryId);
             return ResponseEntity.ok().build();
         }
 
@@ -85,7 +85,7 @@ class GithubWebhookController {
                 repositoryFullName,
                 run.name(),
                 conclusion,
-                run.logsUrl(),
+                run.jobsUrl(),
                 new String(rawBody),
                 resolvedProjectId);
 

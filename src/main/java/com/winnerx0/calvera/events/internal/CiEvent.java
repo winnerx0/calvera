@@ -35,7 +35,7 @@ class CiEvent {
     private String conclusion;
 
     @Column(nullable = false)
-    private String logsUrl;
+    private String jobsUrl;
 
     @Column(columnDefinition = "TEXT")
     private String rawPayload;

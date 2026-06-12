@@ -9,7 +9,7 @@ public interface CiEventService {
                      String repositoryFullName,
                      String workflowName,
                      String conclusion,
-                     String logsUrl,
+                     String jobsUrl,
                      String rawPayload,
                      Long projectId);
 

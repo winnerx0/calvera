@@ -9,9 +9,10 @@ public record CiEventView(
         String repositoryFullName,
         String workflowName,
         String conclusion,
-        String logsUrl,
+        String jobsUrl,
         CiEventStatus status,
         String analysisResult,
+        Long projectId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

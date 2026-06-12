@@ -35,6 +35,12 @@ class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<Long> findOwnerUserId(Long projectId) {
+        return projectRepository.findById(projectId).map(Project::getUserId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ProjectView> findAll(Long userId) {
         return projectRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
                 .stream()
