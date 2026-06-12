@@ -38,6 +38,12 @@ webhook:
   encryption:
     key: ${WEBHOOK_ENCRYPTION_KEY}
 
-llm:
-  api-key: ${LLM_API_KEY}
-  base-url: ${LLM_BASE_URL:https://api.openai.com}
+spring:
+  ai:
+    openai:
+      api-key: ${LLM_API_KEY}
+      base-url: ${LLM_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: gpt-4o-mini
+          max-tokens: 1024

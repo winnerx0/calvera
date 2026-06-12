@@ -1,6 +1,5 @@
 package com.winnerx0.calvera.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,17 +46,6 @@ public class AppConfig {
                 .baseUrl("https://api.github.com")
                 .defaultHeader("Accept", "application/vnd.github+json")
                 .defaultHeader("X-GitHub-Api-Version", "2022-11-28")
-                .build();
-    }
-
-    @Bean
-    public RestClient openAiRestClient(
-            @Value("${llm.base-url}") String baseUrl,
-            @Value("${llm.api-key}") String apiKey) {
-        return RestClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader("Authorization", "Bearer " + apiKey)
-                .defaultHeader("Content-Type", "application/json")
                 .build();
     }
 
