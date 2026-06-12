@@ -3,6 +3,7 @@ package com.winnerx0.calvera.auth.internal;
 import com.winnerx0.calvera.auth.TokenPair;
 import com.winnerx0.calvera.auth.TokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,5 +31,32 @@ class TokenServiceImpl implements TokenService {
         refreshTokenRepository.save(refreshToken);
 
         return new TokenPair(accessToken, rawRefreshToken);
+    }
+
+    @Override
+    @Transactional
+    public TokenPair refresh(String rawRefreshToken) {
+
+        RefreshToken stored = refreshTokenRepository.findByToken(rawRefreshToken)
+                .orElseThrow(() -> new BadCredentialsException("Invalid refresh token"));
+
+        if (stored.getExpiresAt().isBefore(LocalDateTime.now())) {
+            refreshTokenRepository.delete(stored);
+            throw new BadCredentialsException("Refresh token expired");
+        }
+
+        try {
+            if (!"refresh".equals(jwtUtils.extractTokenType(rawRefreshToken))) {
+                throw new BadCredentialsException("Invalid refresh token");
+            }
+        } catch (BadCredentialsException e) {
+            throw e;
+        } catch (Exception e) {
+            refreshTokenRepository.delete(stored);
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+
+        refreshTokenRepository.delete(stored);
+        return createTokenPair(stored.getUserId());
     }
 }

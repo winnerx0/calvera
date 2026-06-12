@@ -7,6 +7,9 @@ export const auth = {
   get accessToken() {
     return localStorage.getItem(ACCESS_TOKEN_KEY)
   },
+  get refreshToken() {
+    return localStorage.getItem(REFRESH_TOKEN_KEY)
+  },
   isAuthenticated() {
     return Boolean(localStorage.getItem(ACCESS_TOKEN_KEY))
   },
@@ -28,7 +31,31 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+let refreshPromise: Promise<boolean> | null = null
+
+async function refreshTokens(): Promise<boolean> {
+  const refreshToken = auth.refreshToken
+  if (!refreshToken) return false
+  try {
+    const response = await fetch("/api/auth/refresh", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    })
+    if (!response.ok) return false
+    const body = (await response.json().catch(() => null)) as ApiResponse<{
+      accessToken: string
+      refreshToken: string
+    }> | null
+    if (!body?.success || !body.data) return false
+    auth.store(body.data.accessToken, body.data.refreshToken)
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit, isRetry = false): Promise<T> {
   const headers = new Headers(init?.headers)
   headers.set("Content-Type", "application/json")
   const token = auth.accessToken
@@ -37,6 +64,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, { ...init, headers })
 
   if (response.status === 401) {
+    if (!isRetry) {
+      refreshPromise ??= refreshTokens().finally(() => {
+        refreshPromise = null
+      })
+      const refreshed = await refreshPromise
+      if (refreshed) return request<T>(path, init, true)
+    }
     auth.clear()
     window.location.assign("/login")
     throw new ApiError(401, "Session expired")

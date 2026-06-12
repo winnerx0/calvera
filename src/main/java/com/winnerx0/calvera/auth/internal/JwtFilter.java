@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -19,11 +18,9 @@ import java.io.IOException;
 class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
-    private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public JwtFilter(JwtUtils jwtUtils, HandlerExceptionResolver handlerExceptionResolver) {
+    public JwtFilter(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
-        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
@@ -53,8 +50,10 @@ class JwtFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, e);
             SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\":false,\"data\":null,\"message\":\"Invalid or expired token\"}");
         }
     }
 }
