@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
-import { Check, Lock, Pencil, Plus, Search, Trash2, X } from "lucide-react"
+import { Link } from "react-router-dom"
+import { ArrowUpRight, Check, Lock, Pencil, Plus, Search, Trash2, X } from "lucide-react"
 import { api } from "@/lib/api"
 import type { GithubRepo, Project } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -268,12 +269,15 @@ export default function Projects() {
                     </Button>
                   </div>
                 ) : (
-                  <>
-                    <p className="truncate text-[13.5px] font-medium">{project.name}</p>
+                  <Link to={`/projects/${project.id}`} className="group block">
+                    <p className="flex items-center gap-1.5 truncate text-[13.5px] font-medium">
+                      {project.name}
+                      <ArrowUpRight className="size-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                    </p>
                     <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
                       {project.repositoryName} · id {project.repositoryId}
                     </p>
-                  </>
+                  </Link>
                 )}
               </div>
               <div className="flex items-center gap-1">

@@ -4,17 +4,34 @@ export interface ApiResponse<T> {
   message: string | null
 }
 
-export type CiEventStatus = "PENDING" | "ANALYZING" | "DONE" | "FAILED"
+export type ReviewStatus = "PENDING" | "ANALYZING" | "DONE" | "FAILED"
 
-export interface CiEvent {
+export type Severity = "high" | "medium" | "low"
+
+export interface BugFinding {
+  file: string
+  startLine: number
+  endLine: number
+  severity: Severity
+  category: string
+  title: string
+  description: string
+  suggestion: string | null
+}
+
+export interface PrReview {
   id: number
   deliveryId: string
   repositoryFullName: string
-  workflowName: string
-  conclusion: string
-  jobsUrl: string
-  status: CiEventStatus
-  analysisResult: string | null
+  prNumber: number
+  prTitle: string | null
+  action: string
+  headSha: string | null
+  baseSha: string | null
+  status: ReviewStatus
+  summary: string | null
+  findings: BugFinding[]
+  githubReviewId: number | null
   projectId: number
   createdAt: string
   updatedAt: string
@@ -36,4 +53,15 @@ export interface Project {
   repositoryId: number
   createdAt: string
   updatedAt: string
+}
+
+export interface PullRequest {
+  number: number
+  title: string
+  state: string
+  draft: boolean
+  headSha: string | null
+  baseSha: string | null
+  author: string | null
+  htmlUrl: string
 }

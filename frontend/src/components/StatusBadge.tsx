@@ -1,40 +1,38 @@
-import type { CiEventStatus } from "@/lib/types"
+import type { ReviewStatus, Severity } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
-const config: Record<CiEventStatus, { label: string; dot: string; pulse?: boolean }> = {
-  PENDING: { label: "Pending", dot: "bg-muted-foreground/60" },
-  ANALYZING: { label: "Analyzing", dot: "bg-amber", pulse: true },
-  DONE: { label: "Analyzed", dot: "bg-jade" },
-  FAILED: { label: "Analysis failed", dot: "bg-signal" },
+const statusConfig: Record<
+  ReviewStatus,
+  { label: string; tone: string; pulse?: boolean }
+> = {
+  PENDING: { label: "queued", tone: "text-muted-foreground" },
+  ANALYZING: { label: "analyzing", tone: "text-amber", pulse: true },
+  DONE: { label: "done", tone: "text-jade" },
+  FAILED: { label: "failed", tone: "text-signal" },
 }
 
-export function StatusBadge({ status }: { status: CiEventStatus }) {
-  const { label, dot, pulse } = config[status] ?? config.PENDING
+export function StatusBadge({ status }: { status: ReviewStatus }) {
+  const { label, tone, pulse } = statusConfig[status] ?? statusConfig.PENDING
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <span
-        className={cn(
-          "h-1.5 w-1.5 rounded-full",
-          dot,
-          pulse && "animate-[pulse-dot_1.2s_ease-in-out_infinite]"
-        )}
-      />
-      <span className="micro-label text-foreground/70">{label}</span>
+    <span className={cn("bracket", tone)}>
+      {pulse && (
+        <span className="h-1 w-1 rounded-full bg-current animate-[pulse-dot_1.2s_ease-in-out_infinite]" />
+      )}
+      {label}
     </span>
   )
 }
 
-export function ConclusionBadge({ conclusion }: { conclusion: string }) {
+const severityTone: Record<Severity, string> = {
+  high: "text-signal",
+  medium: "text-amber",
+  low: "text-muted-foreground",
+}
+
+export function SeverityBadge({ severity }: { severity: Severity }) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-sm border px-1.5 py-0.5 font-mono text-[11px]",
-        conclusion === "failure"
-          ? "border-signal/25 bg-signal/5 text-signal"
-          : "border-border bg-secondary text-muted-foreground"
-      )}
-    >
-      {conclusion}
+    <span className={cn("bracket", severityTone[severity] ?? "text-muted-foreground")}>
+      {severity}
     </span>
   )
 }
