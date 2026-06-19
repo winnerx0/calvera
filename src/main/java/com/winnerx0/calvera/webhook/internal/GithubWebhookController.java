@@ -1,11 +1,11 @@
 package com.winnerx0.calvera.webhook.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.winnerx0.calvera.events.CiEventCreatedEvent;
-import com.winnerx0.calvera.events.CiEventService;
-import com.winnerx0.calvera.events.CiEventView;
 import com.winnerx0.calvera.projects.ProjectService;
 import com.winnerx0.calvera.projects.ProjectView;
+import com.winnerx0.calvera.reviews.PrReviewCreatedEvent;
+import com.winnerx0.calvera.reviews.PrReviewService;
+import com.winnerx0.calvera.reviews.PrReviewView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -24,9 +25,10 @@ class GithubWebhookController {
 
     private static final Duration IDEMPOTENCY_TTL = Duration.ofHours(24);
     private static final String IDEMPOTENCY_KEY_PREFIX = "webhook:delivery:";
+    private static final Set<String> ANALYZED_ACTIONS = Set.of("opened", "synchronize", "reopened");
 
     private final WebhookSignatureVerifier signatureVerifier;
-    private final CiEventService ciEventService;
+    private final PrReviewService prReviewService;
     private final ProjectService projectService;
     private final ApplicationEventPublisher eventPublisher;
     private final StringRedisTemplate redisTemplate;
@@ -46,7 +48,7 @@ class GithubWebhookController {
 
         log.info("webhook starting");
 
-        if (!"workflow_run".equals(eventType)) {
+        if (!"pull_request".equals(eventType)) {
             return ResponseEntity.ok().build();
         }
 
@@ -57,15 +59,14 @@ class GithubWebhookController {
             return ResponseEntity.ok().build();
         }
 
-        WorkflowRunPayload payload = objectMapper.readValue(rawBody, WorkflowRunPayload.class);
-        WorkflowRunPayload.WorkflowRun run = payload.workflowRun();
+        PullRequestPayload payload = objectMapper.readValue(rawBody, PullRequestPayload.class);
+        PullRequestPayload.PullRequest pr = payload.pullRequest();
 
-        if (run == null || run.conclusion() == null) {
+        if (payload.action() == null || pr == null) {
             return ResponseEntity.ok().build();
         }
 
-        String conclusion = run.conclusion();
-        if (!"failure".equals(conclusion) && !"cancelled".equals(conclusion)) {
+        if (!ANALYZED_ACTIONS.contains(payload.action())) {
             return ResponseEntity.ok().build();
         }
 
@@ -80,17 +81,22 @@ class GithubWebhookController {
             return ResponseEntity.ok().build();
         }
 
-        CiEventView saved = ciEventService.save(
+        String headSha = pr.head() != null ? pr.head().sha() : null;
+        String baseSha = pr.base() != null ? pr.base().sha() : null;
+
+        PrReviewView saved = prReviewService.save(
                 deliveryId,
                 repositoryFullName,
-                run.name(),
-                conclusion,
-                run.jobsUrl(),
+                payload.number(),
+                pr.title(),
+                payload.action(),
+                headSha,
+                baseSha,
                 new String(rawBody),
                 resolvedProjectId);
 
-        eventPublisher.publishEvent(new CiEventCreatedEvent(saved.id()));
-        log.info("Persisted CI event {} for delivery {}", saved.id(), deliveryId);
+        eventPublisher.publishEvent(new PrReviewCreatedEvent(saved.id()));
+        log.info("Persisted PR review {} for delivery {}", saved.id(), deliveryId);
 
         return ResponseEntity.ok().build();
     }
