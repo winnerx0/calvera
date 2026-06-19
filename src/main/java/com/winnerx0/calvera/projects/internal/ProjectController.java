@@ -27,6 +27,13 @@ class ProjectController {
         return ResponseEntity.ok(ApiResponse.ok(projectService.findAll(userId(authentication))));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProjectView>> getById(@PathVariable Long id, Authentication authentication) {
+        return projectService.findById(id, userId(authentication))
+                .map(view -> ResponseEntity.ok(ApiResponse.ok(view)))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Project not found")));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<ProjectView>> create(@RequestBody CreateProjectRequest request, Authentication authentication) {
         ProjectView view = projectService.create(request, userId(authentication));
