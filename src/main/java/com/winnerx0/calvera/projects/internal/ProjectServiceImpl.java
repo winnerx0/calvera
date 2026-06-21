@@ -4,9 +4,7 @@ import com.winnerx0.calvera.projects.CreateProjectRequest;
 import com.winnerx0.calvera.projects.ProjectService;
 import com.winnerx0.calvera.projects.ProjectView;
 import com.winnerx0.calvera.projects.UpdateProjectRequest;
-import com.winnerx0.calvera.webhook.CreateWebhookSecretEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +17,6 @@ import java.util.Optional;
 class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -61,8 +58,6 @@ class ProjectServiceImpl implements ProjectService {
         project.setUpdatedAt(LocalDateTime.now());
 
         project = projectRepository.save(project);
-
-        applicationEventPublisher.publishEvent(new CreateWebhookSecretEvent(project.getId()));
 
         return toView(project);
     }

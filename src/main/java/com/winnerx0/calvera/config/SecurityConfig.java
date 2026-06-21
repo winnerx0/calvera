@@ -38,19 +38,6 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain webhookSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .securityMatcher("/webhook/github")
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/webhook/github").permitAll())
-                .build();
-    }
-
-    @Bean
-    @Order(3)
     public SecurityFilterChain loginSecurityFilterChain(HttpSecurity http, AuthenticationSuccessHandler oauthSuccessHandler) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)

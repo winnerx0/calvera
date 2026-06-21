@@ -5,7 +5,6 @@ import com.winnerx0.calvera.projects.CreateProjectRequest;
 import com.winnerx0.calvera.projects.ProjectService;
 import com.winnerx0.calvera.projects.ProjectView;
 import com.winnerx0.calvera.projects.UpdateProjectRequest;
-import com.winnerx0.calvera.webhook.WebhookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import java.util.List;
 class ProjectController {
 
     private final ProjectService projectService;
-    private final WebhookService webhookService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ProjectView>>> getAll(Authentication authentication) {
@@ -45,16 +43,6 @@ class ProjectController {
         return projectService.update(id, request, userId(authentication))
                 .map(view -> ResponseEntity.ok(ApiResponse.ok(view)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Project not found")));
-    }
-
-    @GetMapping("/{id}/secret")
-    public ResponseEntity<ApiResponse<String>> getSecret(@PathVariable Long id, Authentication authentication) {
-        if (projectService.findById(id, userId(authentication)).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Project not found"));
-        }
-        return webhookService.getSecret(id)
-                .map(secret -> ResponseEntity.ok(ApiResponse.ok(secret)))
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("No webhook secret found")));
     }
 
     @DeleteMapping("/{id}")

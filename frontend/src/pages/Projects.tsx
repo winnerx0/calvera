@@ -122,8 +122,7 @@ export default function Projects() {
             <DialogHeader>
               <DialogTitle className="font-light tracking-tight">New project</DialogTitle>
               <DialogDescription className="text-[13px]">
-                Pick a GitHub repository so Calvera can verify its webhook
-                deliveries.
+                Pick a GitHub repository to start reviewing its pull requests.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={create} className="space-y-4">
@@ -239,7 +238,7 @@ export default function Projects() {
         <div className="flex flex-col items-center rounded-md border border-dashed py-20 text-center">
           <p className="text-[13px] font-medium">No projects yet</p>
           <p className="mt-1 max-w-sm text-[13px] text-muted-foreground">
-            Create a project to generate a webhook secret for a repository.
+            Connect a GitHub repository to start reviewing pull requests.
           </p>
         </div>
       )}

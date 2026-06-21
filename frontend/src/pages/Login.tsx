@@ -55,8 +55,8 @@ export default function Login() {
 
           <div className="mt-16 grid w-full grid-cols-3 divide-x border-y py-4">
             {[
-              ["01", "Webhook ingest"],
-              ["02", "Log analysis"],
+              ["01", "PR review"],
+              ["02", "Diff analysis"],
               ["03", "Root cause"],
             ].map(([num, label]) => (
               <div key={num} className="flex flex-col items-center gap-1 px-2">
