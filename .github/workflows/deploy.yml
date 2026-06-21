@@ -44,7 +44,7 @@ jobs:
       - name: Build And Deploy Docker Image
         run: |
           IMAGE="${{ secrets.ACR_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}"
-          LATEST_IMAGE="$ACR_LOGIN_SERVER/$IMAGE_NAME:latest"
+          LATEST_IMAGE="${{ secrets.ACR_LOGIN_SERVER }}/$IMAGE_NAME:latest"
           
           docker build -t "$IMAGE" -t "$LATEST_IMAGE" .
           docker push "$IMAGE"
