@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.winnerx0.calvera.reviews.BugFinding;
 import com.winnerx0.calvera.reviews.EmbeddingChunk;
+import com.winnerx0.calvera.reviews.MessageView;
 import com.winnerx0.calvera.reviews.PrReviewService;
 import com.winnerx0.calvera.reviews.PrReviewView;
 import com.winnerx0.calvera.reviews.ReviewStatus;
@@ -24,6 +25,7 @@ class PrReviewServiceImpl implements PrReviewService {
 
     private final PrReviewRepository repository;
     private final EmbeddingRepository embeddingRepository;
+    private final MessageRepository messageRepository;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -100,6 +102,27 @@ class PrReviewServiceImpl implements PrReviewService {
             return e;
         }).toList();
         embeddingRepository.saveAll(entities);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MessageView> findMessages(Long reviewId) {
+        return messageRepository.findByPrReviewIdOrderByCreatedAtAsc(reviewId)
+                .stream().map(this::toMessageView).toList();
+    }
+
+    @Override
+    @Transactional
+    public MessageView saveMessage(Long reviewId, String role, String content) {
+        Message msg = new Message();
+        msg.setRole(role);
+        msg.setContent(content);
+        msg.setPrReview(repository.getReferenceById(reviewId));
+        return toMessageView(messageRepository.save(msg));
+    }
+
+    private MessageView toMessageView(Message m) {
+        return new MessageView(m.getId(), m.getPrReviewId(), m.getRole(), m.getContent(), m.getCreatedAt());
     }
 
     private String writeFindings(List<BugFinding> findings) {

@@ -59,6 +59,9 @@ class PrReview {
     @OneToMany(mappedBy = "prReview", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Embedding> embeddings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "prReview", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages = new ArrayList<>();
+
     @Column(columnDefinition = "TEXT")
     private String rawPayload;
 

@@ -28,4 +28,8 @@ public interface PrReviewService {
     void updateStatusFailed(Long id);
 
     void saveEmbeddings(Long reviewId, List<EmbeddingChunk> chunks);
+
+    List<MessageView> findMessages(Long reviewId);
+
+    MessageView saveMessage(Long reviewId, String role, String content);
 }

@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.SignalType;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -27,17 +29,45 @@ class ReviewChatService {
 
     private final PrReviewRepository reviewRepository;
     private final EmbeddingRepository embeddingRepository;
+    private final MessageRepository messageRepository;
     private final ProjectService projectService;
     private final AiAssistant ai;
 
     Optional<String> answer(Long reviewId, Long userId, String question) {
         return buildUserPrompt(reviewId, userId, question)
-                .map(prompt -> ai.answer(SYSTEM_PROMPT, prompt));
+                .map(prompt -> {
+                    persist(reviewId, "user", question);
+                    String response = ai.answer(SYSTEM_PROMPT, prompt);
+                    persist(reviewId, "assistant", response);
+                    return response;
+                });
     }
 
     Optional<Flux<String>> streamAnswer(Long reviewId, Long userId, String question) {
         return buildUserPrompt(reviewId, userId, question)
-                .map(prompt -> ai.streamAnswer(SYSTEM_PROMPT, prompt));
+                .map(prompt -> {
+                    persist(reviewId, "user", question);
+                    AtomicReference<String> accumulated = new AtomicReference<>("");
+                    return ai.streamAnswer(SYSTEM_PROMPT, prompt)
+                            .doOnNext(token -> accumulated.updateAndGet(s -> s + token))
+                            .doFinally(signal -> {
+                                if (signal == SignalType.ON_COMPLETE) {
+                                    persist(reviewId, "assistant", accumulated.get());
+                                }
+                            });
+                });
+    }
+
+    private void persist(Long reviewId, String role, String content) {
+        try {
+            Message msg = new Message();
+            msg.setRole(role);
+            msg.setContent(content);
+            msg.setPrReview(reviewRepository.getReferenceById(reviewId));
+            messageRepository.save(msg);
+        } catch (Exception e) {
+            log.warn("Failed to persist {} message for review {}: {}", role, reviewId, e.getMessage());
+        }
     }
 
     protected Optional<String> buildUserPrompt(Long reviewId, Long userId, String question) {

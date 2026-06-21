@@ -146,7 +146,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="rise mx-auto flex h-[calc(100dvh-16rem)] min-h-[28rem] max-w-2xl flex-col">
+    <div className="rise mx-auto flex h-[calc(100dvh-11rem)] min-h-[28rem] max-w-2xl flex-col">
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto pr-1">
         {!selected && thread.length === 0 && (
           <div className="flex h-full flex-col items-start justify-center">

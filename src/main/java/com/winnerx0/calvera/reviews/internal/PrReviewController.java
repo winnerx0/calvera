@@ -7,6 +7,7 @@ import com.winnerx0.calvera.github.PullRequestView;
 import com.winnerx0.calvera.projects.ProjectService;
 import com.winnerx0.calvera.projects.ProjectView;
 import com.winnerx0.calvera.reviews.PrReviewCreatedEvent;
+import com.winnerx0.calvera.reviews.MessageView;
 import com.winnerx0.calvera.reviews.PrReviewService;
 import com.winnerx0.calvera.reviews.PrReviewView;
 import lombok.RequiredArgsConstructor;
@@ -108,6 +109,15 @@ class PrReviewController {
         log.info("Manually queued PR review {} for {}#{}", saved.id(), repositoryFullName, view.number());
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.ok(saved));
+    }
+
+    @GetMapping("/{id}/messages")
+    public ResponseEntity<ApiResponse<List<MessageView>>> getMessages(
+            @PathVariable Long id, Authentication authentication) {
+        return prReviewService.findById(id)
+                .filter(r -> projectService.findById(r.projectId(), userId(authentication)).isPresent())
+                .map(r -> ResponseEntity.ok(ApiResponse.ok(prReviewService.findMessages(id))))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Review not found")));
     }
 
     @PostMapping("/{id}/chat")
