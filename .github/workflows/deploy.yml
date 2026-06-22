@@ -53,4 +53,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: calvera
-          images: "${{ secrets.ACR_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}"
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
