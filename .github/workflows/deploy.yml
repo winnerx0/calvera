@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build And Deploy Docker Image
+      - name: Build And Push Docker Image
         run: |
           IMAGE="${{ secrets.ACR_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}"
           LATEST_IMAGE="${{ secrets.ACR_LOGIN_SERVER }}/$IMAGE_NAME:latest"
@@ -49,3 +49,8 @@ jobs:
           docker build -t "$IMAGE" -t "$LATEST_IMAGE" .
           docker push "$IMAGE"
           docker push "$LATEST_IMAGE"
+      - name: Deploy to Web Apps
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: calvera
+          images: "${{ secrets.ACR_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}"
