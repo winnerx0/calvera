@@ -54,3 +54,4 @@ jobs:
         with:
           app-name: calvera
           images: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP }}
