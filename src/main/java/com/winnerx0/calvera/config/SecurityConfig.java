@@ -64,7 +64,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfiguration.setAllowCredentials(false);
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTION"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setMaxAge(86400L);
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "https://calvera-xi.vercel.app"));
         source.setCorsConfigurations(Map.of("/**", corsConfiguration));
