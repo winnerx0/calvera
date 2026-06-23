@@ -18,7 +18,7 @@ export default function Login() {
 
       <header className="relative flex items-center justify-between px-8 py-6">
         <span className="micro-label text-foreground">Calvera</span>
-        <span className="micro-label">CI Failure Intelligence</span>
+        <span className="micro-label">PR Review Intelligence</span>
       </header>
 
       <main className="relative flex flex-1 flex-col items-center justify-center px-6 pb-24">
@@ -32,19 +32,17 @@ export default function Login() {
             calvera
           </h1>
           <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-muted-foreground">
-            Failed CI runs, captured and explained. Calvera listens to your
-            GitHub workflows and tells you exactly why they broke.
+            Pull requests, reviewed and explained. Calvera analyzes your
+            GitHub PRs and tells you exactly what changed and why it matters.
           </p>
 
           <Button
-            asChild
             size="lg"
             className="mt-12 h-11 w-full max-w-xs gap-2.5 rounded-md text-[13px] font-medium"
+            onClick={() => { window.location.href = apiUrl("/oauth2/authorization/github") }}
           >
-            <a href={apiUrl("/login/oauth2/google")}>
-              <FaGithub className="size-4" aria-hidden />
-              Continue with GitHub
-            </a>
+            <FaGithub className="size-4" aria-hidden />
+            Continue with GitHub
           </Button>
 
           <div className="mt-16 grid w-full grid-cols-3 divide-x border-y py-4">
@@ -64,7 +62,7 @@ export default function Login() {
 
       <footer className="relative px-8 py-6">
         <span className="font-mono text-[11px] text-muted-foreground/50">
-          calvera · workflow_run · failure | cancelled
+          calvera · pull_request · opened | synchronize
         </span>
       </footer>
     </div>
