@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { ArrowUp, Loader2, Plus, Search, X } from "lucide-react"
-import { api, auth } from "@/lib/api"
+import { api, apiUrl, auth } from "@/lib/api"
 import type { PrReview } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -98,7 +98,7 @@ export default function Chat() {
     abortRef.current = controller
 
     try {
-      const url = `/api/reviews/${id}/chat/stream?question=${encodeURIComponent(q)}`
+      const url = apiUrl(`/api/reviews/${id}/chat/stream?question=${encodeURIComponent(q)}`)
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${auth.accessToken ?? ""}` },
         signal: controller.signal,

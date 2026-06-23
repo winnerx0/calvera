@@ -10,11 +10,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    proxy: {
-      "/api": "http://localhost:8080",
-      "/oauth": "http://localhost:8080",
-      "/login": "http://localhost:8080",
-    },
-  },
 })

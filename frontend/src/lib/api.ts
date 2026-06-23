@@ -2,6 +2,11 @@ import type { ApiResponse } from "./types"
 
 const ACCESS_TOKEN_KEY = "calvera.accessToken"
 const REFRESH_TOKEN_KEY = "calvera.refreshToken"
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? ""
+
+export function apiUrl(path: string) {
+  return `${API_URL}${path.startsWith("/") ? path : `/${path}`}`
+}
 
 export const auth = {
   get accessToken() {
@@ -37,7 +42,7 @@ async function refreshTokens(): Promise<boolean> {
   const refreshToken = auth.refreshToken
   if (!refreshToken) return false
   try {
-    const response = await fetch("/api/auth/refresh", {
+    const response = await fetch(apiUrl("/api/auth/refresh"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
@@ -61,7 +66,7 @@ async function request<T>(path: string, init?: RequestInit, isRetry = false): Pr
   const token = auth.accessToken
   if (token) headers.set("Authorization", `Bearer ${token}`)
 
-  const response = await fetch(path, { ...init, headers })
+  const response = await fetch(apiUrl(path), { ...init, headers })
 
   if (response.status === 401) {
     if (!isRetry) {
