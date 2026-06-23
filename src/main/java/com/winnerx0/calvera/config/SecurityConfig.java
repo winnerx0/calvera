@@ -15,6 +15,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableMethodSecurity
@@ -27,7 +33,7 @@ public class SecurityConfig {
         return http
                 .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(cors()))
                 .authenticationManager(authenticationManager)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -41,7 +47,7 @@ public class SecurityConfig {
     public SecurityFilterChain loginSecurityFilterChain(HttpSecurity http, AuthenticationSuccessHandler oauthSuccessHandler) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(cors()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/login", "/oauth/**").permitAll().anyRequest().authenticated())
@@ -50,5 +56,19 @@ public class SecurityConfig {
                     oauth.authorizationEndpoint(auth -> auth.baseUri("/oauth/login"));
                 })
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource cors(){
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        corsConfiguration.setAllowCredentials(false);
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTION"));
+        corsConfiguration.setMaxAge(86400L);
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "https://calvera-xi.vercel.app"));
+        source.setCorsConfigurations(Map.of("/**", corsConfiguration));
+
+        return source;
     }
 }
